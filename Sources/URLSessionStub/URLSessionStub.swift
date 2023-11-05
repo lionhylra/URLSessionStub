@@ -6,6 +6,8 @@ public final class URLSessionStub {
 
     var customRule: ((URLRequest) -> MockResponse?)?
 
+    var onReceiveRequest: ((URLRequest) -> Void)?
+
     public static let shared = URLSessionStub()
 
     init() {
@@ -34,6 +36,10 @@ public final class URLSessionStub {
 
     public func addCustomRule(_ rule: @escaping (URLRequest) -> MockResponse?) {
         customRule = rule
+    }
+
+    public func setOnReceiveRequestObserver(_ closure: ((URLRequest) -> Void)?) {
+        onReceiveRequest = closure
     }
 
     public func removeAllRules() {
@@ -75,6 +81,7 @@ extension URLSessionStub {
             else {
                 return
             }
+            Self.stub.onReceiveRequest?(request)
             let workItem = DispatchWorkItem {
                 self.client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
                 switch mockResponse.result {

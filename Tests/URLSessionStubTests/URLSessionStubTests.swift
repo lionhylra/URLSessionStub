@@ -108,6 +108,21 @@ final class URLSessionStubTests: XCTestCase {
         _ = await task.result
     }
 
+    func testStub_onReceiveRequest() async throws {
+        var mostRecentRequest: URLRequest?
+        stub.regexRules.append(
+            (/https:\/\/example.com\/hello/, .success(data: Data()))
+        )
+        stub.setOnReceiveRequestObserver { mostRecentRequest = $0 }
+        var urlRequest = URLRequest(url: URL(string: "https://example.com/hello")!)
+        urlRequest.httpMethod = "POST"
+        urlRequest.setValue("test", forHTTPHeaderField: "testHeader")
+        let _ = try await URLSession.shared.data(for: urlRequest)
+        XCTAssertEqual(mostRecentRequest?.url?.absoluteString, "https://example.com/hello")
+        XCTAssertEqual(mostRecentRequest?.httpMethod, "POST")
+        XCTAssertEqual(mostRecentRequest?.value(forHTTPHeaderField: "testHeader"), "test")
+    }
+
 
 }
 
