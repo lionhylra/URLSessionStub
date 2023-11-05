@@ -1,5 +1,7 @@
 # URLSessionStub
-A stub to mock responses for URLSession/
+A simple stub to mock responses for URLSession. 
+
+`URLSessionStub` can be used to facilitate testing code that downloads data from server. It enables you to mock the http response easily and verify the request sent to server.
 
 # Usage
 
